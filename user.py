@@ -120,3 +120,5 @@ def create_user(data: dict):
 #
 # token = is_token_alive(user_id=1)
 # print(token)
+
+
