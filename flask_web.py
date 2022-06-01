@@ -1,5 +1,6 @@
 from flask import Flask, render_template, redirect, request
-from user import create_user, get_user_by_id, get_user_by_username, is_token_alive, if_token_is_expire
+from user import create_user, get_user_by_id, get_user_by_username, is_token_alive, token_is_expire, \
+    change_authenticate_user_by_username
 from misc import check_password
 
 app = Flask(__name__)
@@ -25,7 +26,7 @@ def creation_user():
         password = request.form.get('password')
         try:
             create_user(data={'username': username, 'email': email, 'password': password})
-            return render_template('creation_user.html', message=message)
+            return render_template('login_user.html', message=message)
         except Exception as e:
             return render_template('creation_user.html', message=e)
 
@@ -41,16 +42,32 @@ def user_data(id_user):
 def login_user():
     if request.method == 'GET':
         return render_template('login_user.html')
+
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
+
         user = get_user_by_username(username=username)
+
         get_username = user['username']
         get_password = user['password']
+        get_id = user['id']
+
         hash_pass = check_password(get_password, password)
+
         if get_username == username and hash_pass == True:
+            change_authenticate_user_by_username(username=get_username, auth=True)
+            if token_is_expire(get_id):
+                return render_template('my_acc.html')
             return render_template('my_acc.html')
     return redirect('/login')
+
+
+@app.route('/logout/<int:id>')
+def logout_user(id):
+    user = get_user_by_id(id)
+    change_authenticate_user_by_username(user.get('username'))
+    return render_template('login_user.html')
 
 
 @app.route('/account/<int:id>')
@@ -59,15 +76,10 @@ def account(id):
     if alive:
         return render_template('my_acc.html')
     else:
-        expire = if_token_is_expire(id)
+        expire = token_is_expire(id)
         if expire:
             return render_template('my_acc.html')
     return render_template('login_user.html')
-
-
-@app.route('/logout')
-def delete_user():
-    return render_template('delete_user.html')
 
 
 @app.errorhandler(404)
