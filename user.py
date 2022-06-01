@@ -1,7 +1,7 @@
 from sqlalchemy.orm import sessionmaker
 from DAO import User, Auth
 from DAO import engine
-from misc import hash_password, time, generate_alphanum_random_string
+from misc import hash_password, time
 
 session = sessionmaker(bind=engine)
 
@@ -98,27 +98,3 @@ def create_user(data: dict):
     sess.close()
 
     return get_user
-
-#
-# create = create_user(data={'username': 'jimroot17', 'email': 'jimroot555@gmail.com', 'password': 'qwerty123'})
-# print(create)
-
-# user = get_user_by_id(1)
-# print(user)
-
-# print(user.get('password'))
-# print(check_password(hash_pass=user.get('password'), password='qwerty123'))
-
-
-# auth = create_auth(user_id=1)
-# print(auth)
-
-# auth = get_auth(user_id=1)
-# print(auth)
-
-# expire = if_token_is_expire(user_id=1)
-#
-# token = is_token_alive(user_id=1)
-# print(token)
-
-

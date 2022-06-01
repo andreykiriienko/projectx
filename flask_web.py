@@ -7,6 +7,10 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
+    """
+    This is the index page
+    :return:
+    """
     return render_template('links.html')
 
 
@@ -49,16 +53,15 @@ def login_user():
     return redirect('/login')
 
 
-@app.route('/account/<int:id>', methods=['GET'])
+@app.route('/account/<int:id>')
 def account(id):
-    if request.method == 'GET':
-        alive = is_token_alive(user_id=id)
-        if alive:
+    alive = is_token_alive(user_id=id)
+    if alive:
+        return render_template('my_acc.html')
+    else:
+        expire = if_token_is_expire(id)
+        if expire:
             return render_template('my_acc.html')
-        else:
-            expire = if_token_is_expire(id)
-            if expire:
-                return render_template('my_acc.html')
     return render_template('login_user.html')
 
 
