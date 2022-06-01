@@ -1,7 +1,7 @@
 from sqlalchemy.orm import sessionmaker
 from DAO import User, Auth
 from DAO import engine
-from misc import hash_password, time
+from misc import hash_password, time, generate_alphanum_random_string
 
 session = sessionmaker(bind=engine)
 
@@ -9,7 +9,7 @@ session = sessionmaker(bind=engine)
 # ======================================== AUTH =============
 def create_auth(user_id):
     sess = session()
-    auth = Auth(user_id=user_id)
+    auth = Auth(user_id=user_id, token=generate_alphanum_random_string(59))
 
     sess.add(auth)
     sess.commit()
@@ -46,7 +46,7 @@ def is_token_alive(user_id: int):
         return True
 
 
-def if_token_is_expire(user_id: int):
+def token_is_expire(user_id: int):
     if is_token_alive(user_id):
         pass
     else:
@@ -98,3 +98,15 @@ def create_user(data: dict):
     sess.close()
 
     return get_user
+
+def change_authenticate_user_by_username(username, auth=False):
+    sess = session()
+    user = sess.query(User).filter(User.username == username).one()
+
+    if auth:
+        user.authenticate = True
+    else:
+        user.authenticate = False
+
+    sess.commit()
+    sess.close()

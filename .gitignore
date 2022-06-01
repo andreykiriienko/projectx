@@ -1,1 +1,3 @@
-.idea
+.idea/
+.idea/sqlalchemyProject.iml
+__pycache__/
