@@ -33,7 +33,6 @@ def delete_auth(user_id: int):
 
     sess.delete(auth)
     sess.commit()
-    # generate_alphanum_random_string(59)
     new_auth = create_auth(user_id=user_id)
     return new_auth
 
