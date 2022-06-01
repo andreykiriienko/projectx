@@ -76,10 +76,7 @@ def account(id):
     if alive:
         return render_template('my_acc.html')
     else:
-        expire = token_is_expire(id)
-        if expire:
-            return render_template('my_acc.html')
-    return render_template('login_user.html')
+        return redirect('/login')
 
 
 @app.errorhandler(404)
