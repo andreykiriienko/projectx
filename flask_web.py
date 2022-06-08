@@ -1,9 +1,10 @@
-from flask import Flask, render_template, redirect, request
+from flask import Flask, render_template, redirect, request, flash
 from user import create_user, get_user_by_id, get_user_by_username, is_token_alive, token_is_expire, \
     change_authenticate_user_by_username
 from misc import check_password
 
 app = Flask(__name__)
+app.secret_key = 'jhgfjhfhf7575uytrhyr'
 
 
 @app.route('/')
@@ -17,7 +18,6 @@ def index():
 
 @app.route('/user/create', methods=['GET', 'POST'])
 def creation_user():
-    message = 'User created successful'
     if request.method == 'GET':
         return render_template('creation_user.html')
     if request.method == 'POST':
@@ -26,8 +26,10 @@ def creation_user():
         password = request.form.get('password')
         try:
             create_user(data={'username': username, 'email': email, 'password': password})
-            return render_template('login_user.html', message=message)
+            flash('You were successfully logged in')
+            return redirect('/login')
         except Exception as e:
+            flash('You were successfully logged in')
             return render_template('creation_user.html', message=e)
 
 
@@ -41,6 +43,7 @@ def user_data(id_user):
 @app.route('/login', methods=['GET', 'POST'])
 def login_user():
     if request.method == 'GET':
+        flash(message='Successfully')
         return render_template('login_user.html')
 
     if request.method == 'POST':
@@ -67,7 +70,7 @@ def login_user():
 def logout_user(id):
     user = get_user_by_id(id)
     change_authenticate_user_by_username(user.get('username'))
-    return render_template('login_user.html')
+    return redirect('/login')
 
 
 @app.route('/account/<int:id>')

@@ -8,9 +8,15 @@
     <title>Document</title>
 </head>
 <body>
-    {% if message %}
-        <p>{{ message }}</p>
-    {% endif %}
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <ul class=flashes>
+    {% for message in messages %}
+      <li>{{ message }}</li>
+    {% endfor %}
+    </ul>
+  {% endif %}
+{% endwith %}
 <div class="form">
     <form class="login-form" method="post">
         <input type="text" placeholder="username" name="username"/><br>
